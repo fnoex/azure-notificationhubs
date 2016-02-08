@@ -272,6 +272,22 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     }
 }
 
+- (void) retrieveAllRegistrationsWithDeviceTokenData:(NSData *)deviceTokenData completion:(void (^)(NSArray *, NSError *))completion
+{
+    if(deviceTokenData == nil)
+    {
+        if (completion) {
+            completion(@[], [SBNotificationHubHelper errorForNullDeviceToken]);
+        }
+
+        return;
+    }
+
+    NSString* deviceToken = [self convertDeviceToken:deviceTokenData];
+
+    [self retrieveAllRegistrationsWithDeviceToken:deviceToken completion:completion];
+}
+
 - (void) retrieveAllRegistrationsWithDeviceToken:(NSString*)deviceToken completion:(void (^)(NSArray*, NSError*))completion
 {
     NSURL *requestUri = [self composeRetrieveAllRegistrationsUriWithDeviceToken:deviceToken];
@@ -653,6 +669,30 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     return result;
 }
 
+- (NSArray*) retrieveAllRegistrationsWithDeviceTokenData:(NSData *)deviceTokenData error:(NSError *__autoreleasing *)error
+{
+    if( deviceTokenData == nil)
+    {
+        if(error)
+        {
+            *error = [SBNotificationHubHelper errorForNullDeviceToken];
+        }
+
+        return @[];
+    }
+
+    NSString* deviceToken = [self convertDeviceToken:deviceTokenData];
+
+    NSError* operationError;
+    NSArray* registrations = [self retrieveAllRegistrationsWithDeviceToken:deviceToken error:&operationError];
+
+    if (operationError)
+    {
+        *error = operationError;
+    }
+
+    return registrations;
+}
 
 // This function will retrieve all registrations and update local storage with them.
 - (NSArray*) retrieveAllRegistrationsWithDeviceToken:(NSString*)deviceToken error:(NSError**)error
