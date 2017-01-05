@@ -14,13 +14,11 @@ static char decodingTable[128];
 static NSString* decodingTableLock = @"decodingTableLock";
 
 + (NSString*) urlEncode: (NSString*)urlString{
-    return (__bridge NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)urlString, NULL,CFSTR("!*'();:@&=+$,/?%#[]"),  kCFStringEncodingUTF8);
+    return [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"]];
 }
 
 + (NSString*) urlDecode: (NSString*)urlString{
-    return [[urlString
-      stringByReplacingOccurrencesOfString:@"+" withString:@" "]
-     stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return [[urlString stringByReplacingOccurrencesOfString:@"+" withString:@" "] stringByRemovingPercentEncoding];
 }
 
 + (NSString*) createHashWithData:(NSData*)data{
