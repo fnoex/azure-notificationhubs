@@ -14,7 +14,8 @@ static char decodingTable[128];
 static NSString* decodingTableLock = @"decodingTableLock";
 
 + (NSString*) urlEncode: (NSString*)urlString{
-    return [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"]];
+    NSCharacterSet* characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"] invertedSet];
+    return [urlString stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
 }
 
 + (NSString*) urlDecode: (NSString*)urlString{
