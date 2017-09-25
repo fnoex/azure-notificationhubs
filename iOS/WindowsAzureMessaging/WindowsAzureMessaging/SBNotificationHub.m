@@ -86,7 +86,7 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     return newDeviceToken;
 }
 
-- (void) registerNativeWithDeviceToken:(NSData*)deviceTokenData tags:(NSSet*)tags completion:(void (^)(NSError* error))completion;
+- (void) registerNativeWithDeviceToken:(NSData*)deviceTokenData tags:(NSSet<NSString*>*)tags completion:(void (^)(NSError* error))completion;
 {
     if( deviceTokenData == nil)
     {
@@ -272,6 +272,22 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     }
 }
 
+- (void) retrieveAllRegistrationsWithDeviceTokenData:(NSData *)deviceTokenData completion:(void (^)(NSArray<SBRegistration*> *, NSError *))completion
+{
+    if(deviceTokenData == nil)
+    {
+        if (completion) {
+            completion(@[], [SBNotificationHubHelper errorForNullDeviceToken]);
+        }
+
+        return;
+    }
+
+    NSString* deviceToken = [self convertDeviceToken:deviceTokenData];
+
+    [self retrieveAllRegistrationsWithDeviceToken:deviceToken completion:completion];
+}
+
 - (void) retrieveAllRegistrationsWithDeviceToken:(NSString*)deviceToken completion:(void (^)(NSArray*, NSError*))completion
 {
     NSURL *requestUri = [self composeRetrieveAllRegistrationsUriWithDeviceToken:deviceToken];
@@ -430,7 +446,7 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     }
 }
 
-- (BOOL) registerNativeWithDeviceToken:(NSData*)deviceTokenData tags:(NSSet*)tags error:(NSError**)error
+- (BOOL) registerNativeWithDeviceToken:(NSData*)deviceTokenData tags:(NSSet<NSString*>*)tags error:(NSError**)error
 {
     if( deviceTokenData == nil)
     {
@@ -470,7 +486,7 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     return [self createorUpdateWith:name payload:payload deviceToken:deviceToken error:error];
 }
 
-- (BOOL) registerTemplateWithDeviceToken:(NSData*)deviceTokenData name:(NSString*)templateName jsonBodyTemplate:(NSString*)bodyTemplate expiryTemplate:(NSString*)expiryTemplate tags:(NSSet*)tags error:(NSError**)error
+- (BOOL) registerTemplateWithDeviceToken:(NSData*)deviceTokenData name:(NSString*)templateName jsonBodyTemplate:(NSString*)bodyTemplate expiryTemplate:(NSString*)expiryTemplate tags:(NSSet<NSString*>*)tags error:(NSError**)error
 {
     if( deviceTokenData == nil)
     {
@@ -653,6 +669,30 @@ NSString* const _UserAgentTemplate = @"NOTIFICATIONHUBS/%@(api-origin=IosSdk; os
     return result;
 }
 
+- (NSArray<SBRegistration*>*) retrieveAllRegistrationsWithDeviceTokenData:(NSData *)deviceTokenData error:(NSError *__autoreleasing *)error
+{
+    if( deviceTokenData == nil)
+    {
+        if(error)
+        {
+            *error = [SBNotificationHubHelper errorForNullDeviceToken];
+        }
+
+        return @[];
+    }
+
+    NSString* deviceToken = [self convertDeviceToken:deviceTokenData];
+
+    NSError* operationError;
+    NSArray* registrations = [self retrieveAllRegistrationsWithDeviceToken:deviceToken error:&operationError];
+
+    if (operationError)
+    {
+        *error = operationError;
+    }
+
+    return registrations;
+}
 
 // This function will retrieve all registrations and update local storage with them.
 - (NSArray*) retrieveAllRegistrationsWithDeviceToken:(NSString*)deviceToken error:(NSError**)error

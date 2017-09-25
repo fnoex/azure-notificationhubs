@@ -22,8 +22,10 @@
 - (SBNotificationHub*) initWithConnectionString:(NSString*) connectionString notificationHubPath:(NSString*)notificationHubPath;
 
 // Async operations
-- (void) registerNativeWithDeviceToken:(NSData*)deviceToken tags:(NSSet*)tags completion:(void (^)(NSError* error))completion;
-- (void) registerTemplateWithDeviceToken:(NSData*)deviceToken name:(NSString*)name jsonBodyTemplate:(NSString*)bodyTemplate expiryTemplate:(NSString*)expiryTemplate tags:(NSSet*)tags completion:(void (^)(NSError* error))completion;
+- (void) registerNativeWithDeviceToken:(NSData*)deviceToken tags:(NSSet<NSString*>*)tags completion:(void (^)(NSError* error))completion;
+- (void) registerTemplateWithDeviceToken:(NSData*)deviceToken name:(NSString*)name jsonBodyTemplate:(NSString*)bodyTemplate expiryTemplate:(NSString*)expiryTemplate tags:(NSSet<NSString*>*)tags completion:(void (^)(NSError* error))completion;
+
+- (void) retrieveAllRegistrationsWithDeviceTokenData:(NSData*)deviceTokenData completion:(void (^)(NSArray<SBRegistration*>*, NSError*))completion;
 
 - (void) unregisterNativeWithCompletion:(void (^)(NSError* error))completion;
 - (void) unregisterTemplateWithName:(NSString*)name completion:(void (^)(NSError* error))completion;
@@ -31,8 +33,10 @@
 - (void) unregisterAllWithDeviceToken:(NSData*)deviceToken completion:(void (^)(NSError* error))completion;
 
 // sync operations
-- (BOOL) registerNativeWithDeviceToken:(NSData*)deviceToken tags:(NSSet*)tags error:(NSError**)error;
-- (BOOL) registerTemplateWithDeviceToken:(NSData*)deviceToken name:(NSString*)templateName jsonBodyTemplate:(NSString*)bodyTemplate expiryTemplate:(NSString*)expiryTemplate tags:(NSSet*)tags error:(NSError**)error;
+- (BOOL) registerNativeWithDeviceToken:(NSData*)deviceToken tags:(NSSet<NSString*>*)tags error:(NSError**)error;
+- (BOOL) registerTemplateWithDeviceToken:(NSData*)deviceToken name:(NSString*)templateName jsonBodyTemplate:(NSString*)bodyTemplate expiryTemplate:(NSString*)expiryTemplate tags:(NSSet<NSString*>*)tags error:(NSError**)error;
+
+- (NSArray<SBRegistration*>*) retrieveAllRegistrationsWithDeviceTokenData:(NSData*)deviceTokenData error:(NSError**)error;
 
 - (BOOL) unregisterNativeWithError:(NSError**)error;
 - (BOOL) unregisterTemplateWithName:(NSString*)name error:(NSError**)error;

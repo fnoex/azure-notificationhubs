@@ -14,13 +14,12 @@ static char decodingTable[128];
 static NSString* decodingTableLock = @"decodingTableLock";
 
 + (NSString*) urlEncode: (NSString*)urlString{
-    return (__bridge NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)urlString, NULL,CFSTR("!*'();:@&=+$,/?%#[]"),  kCFStringEncodingUTF8);
+    NSCharacterSet* characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"] invertedSet];
+    return [urlString stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
 }
 
 + (NSString*) urlDecode: (NSString*)urlString{
-    return [[urlString
-      stringByReplacingOccurrencesOfString:@"+" withString:@" "]
-     stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return [[urlString stringByReplacingOccurrencesOfString:@"+" withString:@" "] stringByRemovingPercentEncoding];
 }
 
 + (NSString*) createHashWithData:(NSData*)data{
@@ -82,7 +81,7 @@ static NSString* decodingTableLock = @"decodingTableLock";
 		inputLength--;
 	}
 	
-	int outputLength = inputLength * 3 / 4;
+	int outputLength = (int)(inputLength * 3 / 4);
 	NSMutableData* outputData = [NSMutableData dataWithLength:outputLength];
 	uint8_t* output = outputData.mutableBytes;
     

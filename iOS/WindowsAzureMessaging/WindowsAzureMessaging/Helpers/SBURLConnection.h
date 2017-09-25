@@ -8,7 +8,7 @@
 typedef void (^SBURLConnectionCompletion)(NSHTTPURLResponse*,NSData*,NSError*);
 typedef SBStaticHandlerResponse* (^StaticHandleBlock)(NSURLRequest*);
 
-@interface SBURLConnection : NSObject{
+@interface SBURLConnection : NSObject <NSURLSessionDataDelegate> {
 @private
     NSURLRequest* _request;
     NSHTTPURLResponse* _response;
