@@ -74,7 +74,7 @@ StaticHandleBlock _staticHandler;
     }
 }
 
-- (NSData *)sendSynchronousRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error
+- (NSData *)sendSynchronousRequest:(NSURLRequest *)request returningResponse:(__autoreleasing NSURLResponse **)response error:(__autoreleasing NSError **)error
 {
     if( _staticHandler != nil)
     {
